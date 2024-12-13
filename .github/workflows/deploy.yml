@@ -1,0 +1,36 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Beam
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: "26.0.2"
+          gleam-version: "1.5.1"
+          rebar3-version: "3"
+          # elixir-version: "1.15.4"
+      - name: Install dependencies
+        run: |
+          gleam deps download
+          gleam run -m esgleam/install
+      - name: Build
+        run: |
+          gleam build
+          gleam run -m build
+      - name: Deploy to BunnyCDN
+        uses: ayeressian/bunnycdn-storage-deploy@v2.2.3
+        with:
+          source: "./dist"
+          destination: "/"
+          upload: "true"
+          remove: "true"
+          storageZoneName: ${{ secrets.BUNNYCDN_STORAGE_ZONE }}
+          storagePassword: ${{ secrets.BUNNYCDN_STORAGE_KEY }}
