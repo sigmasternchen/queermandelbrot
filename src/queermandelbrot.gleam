@@ -113,16 +113,30 @@ fn redraw(ctx: Context2D, canvas_width: Int, canvas_height: Int) {
           <. int.to_float(canvas_width) /. int.to_float(canvas_height)
 
         let #(sizing_factor, x_offset, y_offset) = case pad_horizontal {
-          True -> #(
-            int.to_float(canvas_height) /. { max_y -. min_y },
-            min_x,
-            min_y,
-          )
-          False -> #(
-            int.to_float(canvas_width) /. { max_x -. min_x },
-            min_x,
-            min_y,
-          )
+          True -> {
+            let scaling = int.to_float(canvas_height) /. { max_y -. min_y }
+            #(
+              scaling,
+              min_x
+                -. {
+                int.to_float(canvas_width) /. scaling -. { max_x -. min_x }
+              }
+                /. 2.0,
+              min_y,
+            )
+          }
+          False -> {
+            let scaling = int.to_float(canvas_width) /. { max_x -. min_x }
+            #(
+              scaling,
+              min_x,
+              min_y
+                -. {
+                int.to_float(canvas_height) /. scaling -. { max_y -. min_y }
+              }
+                /. 2.0,
+            )
+          }
         }
 
         let location =
