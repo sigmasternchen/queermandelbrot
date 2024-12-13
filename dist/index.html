@@ -10,10 +10,45 @@
 				right: 0;
 				bottom: 0;
 			}
+			#menu {
+				position: absolute;
+				top: 0px;
+				left: 0px;
+				font-size: 2vh;
+				font-family: sans-serif;
+			}
+			ul {
+				padding: 0px;
+				margin: 0px;
+			}
+			li {
+				list-style-type: none;
+			}
+			li a {
+				display: inline-block;
+				padding: 0.5vh 0 0.5vh 2vh;
+				width: 10vh;
+				text-decoration: none;
+				color: white;
+				background-color: rgba(0, 0, 0, 0.5);
+				transition: background-color 0.5s, color 0.5s, padding-left 0.5s;
+			}
+			li a:hover, a.selected {
+				padding-left: 4vh;
+				color: black;
+				background-color: rgba(255, 255, 255, 0.5);
+			}
 		</style>
 	</head>
 	<body>
 		<canvas id="mandelbrot" width="600" height="400"></canvas>
+		<div id="menu">
+			<ul>
+				<li><a class="rainbow" href="?rainbow">Rainbow</a></li>
+				<li><a class="trans" href="?trans">Trans</a></li>
+				<li><a class="lesbian" href="?lesbian">Lesbian</a></li>	
+			</ul>
+		</div>
 		<script src="./queermandelbrot.js"></script>
 	</body>
 </html>

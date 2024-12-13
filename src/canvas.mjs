@@ -34,4 +34,9 @@ export const requestAnimationFrame = (callback) => {
 	window.addEventListener("message", eventListener)
 	window.postMessage(null);
 };
-//window.requestAnimationFrame;
+
+export const getQueryString = () => window.location.search;
+
+export const addClassToQuerySelector = (querySelector, className) => 
+	document.querySelector(querySelector)?.classList?.add?.(className);
+

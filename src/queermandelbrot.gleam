@@ -87,9 +87,12 @@ fn animate_for_each(
   }
 }
 
-fn redraw(ctx: Context2D, canvas_width: Int, canvas_height: Int) {
-  let colorscheme = Lesbian
-
+fn redraw(
+  ctx: Context2D,
+  canvas_width: Int,
+  canvas_height: Int,
+  colorscheme: ColorScheme,
+) {
   set_size(ctx, canvas_width, canvas_height)
   clear(ctx)
 
@@ -105,7 +108,6 @@ fn redraw(ctx: Context2D, canvas_width: Int, canvas_height: Int) {
       get_inner_width() == canvas_width && get_inner_height() == canvas_height
     },
     list.each(_, fn(x) {
-      io.debug(x)
       list.range(0, canvas_height - 1)
       |> list.each(fn(y) {
         let pad_horizontal =
@@ -157,10 +159,27 @@ fn redraw(ctx: Context2D, canvas_width: Int, canvas_height: Int) {
 
 pub fn main() {
   let ctx = get_context("mandelbrot")
+  let query_string = get_query_string()
 
-  redraw(ctx, get_inner_width(), get_inner_height())
+  let colorscheme = case query_string {
+    "?trans" -> Trans
+    "?lesbian" -> Lesbian
+    "?rainbow" | _ -> Rainbow
+  }
 
-  on_resize(fn() { redraw(ctx, get_inner_width(), get_inner_height()) })
+  io.debug(colorscheme)
+
+  case colorscheme {
+    Rainbow -> add_class_to_query_selector("a.rainbow", "selected")
+    Trans -> add_class_to_query_selector("a.trans", "selected")
+    Lesbian -> add_class_to_query_selector("a.lesbian", "selected")
+  }
+
+  redraw(ctx, get_inner_width(), get_inner_height(), colorscheme)
+
+  on_resize(fn() {
+    redraw(ctx, get_inner_width(), get_inner_height(), colorscheme)
+  })
 }
 
 type Context2D
@@ -188,3 +207,9 @@ fn set_size(ctx: Context2D, width: Int, height: Int) -> Nil
 
 @external(javascript, "./canvas.mjs", "requestAnimationFrame")
 fn request_animation_frame(callback: fn() -> Nil) -> Nil
+
+@external(javascript, "./canvas.mjs", "getQueryString")
+fn get_query_string() -> String
+
+@external(javascript, "./canvas.mjs", "addClassToQuerySelector")
+fn add_class_to_query_selector(query: String, class: String) -> Nil
