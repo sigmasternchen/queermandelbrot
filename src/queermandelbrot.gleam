@@ -113,20 +113,22 @@ fn redraw(ctx: Context2D, canvas_width: Int, canvas_height: Int) {
           <. int.to_float(canvas_width) /. int.to_float(canvas_height)
 
         let #(sizing_factor, x_offset, y_offset) = case pad_horizontal {
-          True -> #(canvas_height, min_x, min_y)
-          False -> #(canvas_width, min_x, min_y)
+          True -> #(
+            int.to_float(canvas_height) /. { max_y -. min_y },
+            min_x,
+            min_y,
+          )
+          False -> #(
+            int.to_float(canvas_width) /. { max_x -. min_x },
+            min_x,
+            min_y,
+          )
         }
 
         let location =
           Complex(
-            real: int.to_float(x)
-              /. int.to_float(sizing_factor)
-              *. { max_x -. min_x }
-              +. x_offset,
-            imaginary: int.to_float(y)
-              /. int.to_float(sizing_factor)
-              *. { max_y -. min_y }
-              +. y_offset,
+            real: int.to_float(x) /. sizing_factor +. x_offset,
+            imaginary: int.to_float(y) /. sizing_factor +. y_offset,
           )
         let value = get_mandelbrot_value(location, 1000.0, Complex(0.0, 0.0), 0)
         case value {
